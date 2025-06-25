@@ -47,7 +47,7 @@ public class DatabaseConnection {
         String createStudentsTableSql = "CREATE TABLE IF NOT EXISTS students (id SERIAL PRIMARY KEY, name TEXT NOT NULL, major TEXT NOT NULL);";
         String createEnrollmentsTableSql = "CREATE TABLE IF NOT EXISTS enrollments (schedule_id INTEGER REFERENCES schedules(id) ON DELETE CASCADE, student_id INTEGER REFERENCES students(id) ON DELETE CASCADE, PRIMARY KEY (schedule_id, student_id));";
 
-        String insertDefaultUser = "INSERT INTO users(username, password, profile_picture_path) SELECT 'admin', 'password', 'https://i.imgur.com/S8w42gM.png' WHERE NOT EXISTS (SELECT 1 FROM users WHERE username = 'admin');";
+        String insertDefaultUser = "INSERT INTO users(username, password, profile_picture_path) SELECT 'admin', 'password', '/images/default-profile.png' WHERE NOT EXISTS (SELECT 1 FROM users WHERE username = 'admin');";
 
         try (Connection conn = connect(); Statement stmt = conn.createStatement()) {
             if (conn == null) {

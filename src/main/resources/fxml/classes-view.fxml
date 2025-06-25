@@ -85,7 +85,6 @@
                                 <JFXComboBox fx:id="teacherComboBox" prefWidth="200.0" promptText="Teacher" />
                             </children>
                         </HBox>
-
                         <HBox spacing="10.0">
                             <children>
                                 <JFXTextField fx:id="semesterField" HBox.hgrow="ALWAYS" promptText="Semester"/>
@@ -93,12 +92,11 @@
                                 <JFXTextField fx:id="promotionField" HBox.hgrow="ALWAYS" promptText="Promotion"/>
                             </children>
                         </HBox>
-
                         <HBox spacing="10.0">
                             <children>
-                                <JFXTextField fx:id="dayOfWeekField" HBox.hgrow="ALWAYS" promptText="Day of Week (e.g., Monday)" />
-                                <JFXTextField fx:id="startTimeField" HBox.hgrow="ALWAYS" promptText="Start Time (HH:MM)" />
-                                <JFXTextField fx:id="endTimeField" HBox.hgrow="ALWAYS" promptText="End Time (HH:MM)" />
+                                <!-- Replaced TextFields with ComboBoxes -->
+                                <JFXComboBox fx:id="dayOfWeekComboBox" HBox.hgrow="ALWAYS" promptText="Day of Week" />
+                                <JFXComboBox fx:id="timeSlotComboBox" HBox.hgrow="ALWAYS" promptText="Time Slot" />
                             </children>
                         </HBox>
                         <HBox spacing="10.0">

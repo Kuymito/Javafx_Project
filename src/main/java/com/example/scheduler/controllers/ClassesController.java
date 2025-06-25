@@ -25,6 +25,8 @@ public class ClassesController {
     @FXML private JFXTextField dayOfWeekField;
     @FXML private JFXTextField startTimeField;
     @FXML private JFXTextField endTimeField;
+    @FXML private JFXComboBox<String> dayOfWeekComboBox;
+    @FXML private JFXComboBox<String> timeSlotComboBox;
 
     // --- FXML Fields for Schedule and Enrollment Tables ---
     @FXML private TableView<Schedule> scheduleTable;
@@ -44,6 +46,12 @@ public class ClassesController {
     private final ObservableList<Student> enrolledStudentList = FXCollections.observableArrayList();
     private final ObservableList<Student> allStudentsList = FXCollections.observableArrayList();
     private final ObservableList<Teacher> allTeachersList = FXCollections.observableArrayList();
+    private final ObservableList<String> weekdayTimeSlots = FXCollections.observableArrayList(
+            "07:00-10:00", "10:30-13:30", "14:00-17:00", "17:30-20:30"
+    );
+    private final ObservableList<String> weekendTimeSlots = FXCollections.observableArrayList(
+            "07:00-11:00"
+    );
 
 
     @FXML
@@ -53,6 +61,7 @@ public class ClassesController {
         setupEnrolledStudentsTable();
         setupAllStudentsComboBox();
         setupTeacherComboBox();
+        setupDayAndTimeComboBoxes();
 
         // Load initial data
         loadAllData();
@@ -72,6 +81,24 @@ public class ClassesController {
                         enrollmentLabel.setText("Select a Class");
                     }
                 });
+    }
+
+    private void setupDayAndTimeComboBoxes() {
+        // Populate days
+        dayOfWeekComboBox.setItems(FXCollections.observableArrayList(
+                "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
+        ));
+
+        // Add listener to update time slots based on selected day
+        dayOfWeekComboBox.getSelectionModel().selectedItemProperty().addListener((obs, oldDay, newDay) -> {
+            if (newDay != null) {
+                if (newDay.equals("Saturday") || newDay.equals("Sunday")) {
+                    timeSlotComboBox.setItems(weekendTimeSlots);
+                } else {
+                    timeSlotComboBox.setItems(weekdayTimeSlots);
+                }
+            }
+        });
     }
 
     private void loadAllData() {
@@ -133,11 +160,18 @@ public class ClassesController {
     @FXML
     private void handleAddButton() {
         Teacher selectedTeacher = teacherComboBox.getSelectionModel().getSelectedItem();
-        if (selectedTeacher == null || courseNameField.getText().isEmpty()) {
-            // Add user feedback here (e.g., an alert)
-            return;
+        String timeSlot = timeSlotComboBox.getSelectionModel().getSelectedItem();
+
+        if (selectedTeacher == null || courseNameField.getText().isEmpty() || timeSlot == null) {
+            return; // Add user feedback (alert)
         }
-        Schedule newSchedule = new Schedule(0, courseNameField.getText(), roomNumberField.getText(), null, dayOfWeekField.getText(), startTimeField.getText(), endTimeField.getText(), semesterField.getText(), groupField.getText(), promotionField.getText());
+
+        // Split the time slot to get start and end times
+        String[] times = timeSlot.split("-");
+        String startTime = times[0];
+        String endTime = times[1];
+
+        Schedule newSchedule = new Schedule(0, courseNameField.getText(), roomNumberField.getText(), null, dayOfWeekComboBox.getValue(), startTime, endTime, semesterField.getText(), groupField.getText(), promotionField.getText());
         dao.addSchedule(newSchedule, selectedTeacher.getId());
         loadScheduleData();
         clearForm();
@@ -147,9 +181,15 @@ public class ClassesController {
     private void handleUpdateButton() {
         Schedule selectedSchedule = scheduleTable.getSelectionModel().getSelectedItem();
         Teacher selectedTeacher = teacherComboBox.getSelectionModel().getSelectedItem();
-        if (selectedSchedule == null || selectedTeacher == null) return;
+        String timeSlot = timeSlotComboBox.getSelectionModel().getSelectedItem();
 
-        Schedule updatedSchedule = new Schedule(selectedSchedule.getId(), courseNameField.getText(), roomNumberField.getText(), null, dayOfWeekField.getText(), startTimeField.getText(), endTimeField.getText(), semesterField.getText(), groupField.getText(), promotionField.getText());
+        if (selectedSchedule == null || selectedTeacher == null || timeSlot == null) return;
+
+        String[] times = timeSlot.split("-");
+        String startTime = times[0];
+        String endTime = times[1];
+
+        Schedule updatedSchedule = new Schedule(selectedSchedule.getId(), courseNameField.getText(), roomNumberField.getText(), null, dayOfWeekComboBox.getValue(), startTime, endTime, semesterField.getText(), groupField.getText(), promotionField.getText());
         dao.updateSchedule(updatedSchedule, selectedTeacher.getId());
         loadScheduleData();
         clearForm();
@@ -205,6 +245,11 @@ public class ClassesController {
         semesterField.setText(schedule.getSemester());
         groupField.setText(schedule.getGroup());
         promotionField.setText(schedule.getPromotion());
+        // Populate the new dropdowns
+        dayOfWeekComboBox.setValue(schedule.getDayOfWeek());
+        // Re-create the time slot string to select it in the ComboBox
+        String timeSlot = schedule.getStartTime() + "-" + schedule.getEndTime();
+        timeSlotComboBox.setValue(timeSlot);
     }
 
     @FXML
@@ -219,5 +264,8 @@ public class ClassesController {
         semesterField.clear();
         groupField.clear();
         promotionField.clear();
+        dayOfWeekComboBox.getSelectionModel().clearSelection();
+        timeSlotComboBox.getSelectionModel().clearSelection();
+        timeSlotComboBox.getItems().clear();
     }
 }
