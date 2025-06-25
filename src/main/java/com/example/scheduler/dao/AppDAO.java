@@ -17,16 +17,15 @@ public class AppDAO {
 
     // --- User Validation ---
 
+    // --- User Validation ---
     /**
      * Validates a user's credentials against the database.
      * @param username The username to check.
      * @param password The password to check.
-     * @return true if credentials are valid, false otherwise.
+     * @return The profile picture path if credentials are valid, null otherwise.
      */
-    public boolean validateUser(String username, String password) {
-        // NOTE: In a real-world application, passwords should be hashed and salted.
-        // This is a simplified example for demonstration purposes.
-        String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
+    public String validateUser(String username, String password) {
+        String sql = "SELECT profile_picture_path FROM users WHERE username = ? AND password = ?";
         try (Connection conn = DatabaseConnection.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
@@ -34,13 +33,14 @@ public class AppDAO {
             pstmt.setString(2, password);
 
             try (ResultSet rs = pstmt.executeQuery()) {
-                // If a record is found, rs.next() will be true
-                return rs.next();
+                if (rs.next()) {
+                    return rs.getString("profile_picture_path");
+                }
             }
         } catch (SQLException e) {
             System.err.println("User validation error: " + e.getMessage());
-            return false;
         }
+        return null; // Return null if validation fails
     }
 
 
@@ -234,6 +234,67 @@ public class AppDAO {
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.err.println("Error deleting student: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Gets all students enrolled in a specific schedule.
+     * @param scheduleId The ID of the schedule.
+     * @return A list of enrolled students.
+     */
+    public List<Student> getStudentsForSchedule(int scheduleId) {
+        String sql = "SELECT s.id, s.name, s.major FROM students s " +
+                "JOIN enrollments e ON s.id = e.student_id " +
+                "WHERE e.schedule_id = ?";
+        List<Student> enrolledStudents = new ArrayList<>();
+        try (Connection conn = DatabaseConnection.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, scheduleId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    enrolledStudents.add(new Student(rs.getInt("id"), rs.getString("name"), rs.getString("major")));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching students for schedule: " + e.getMessage());
+        }
+        return enrolledStudents;
+    }
+
+    /**
+     * Enrolls a student in a schedule.
+     * @param studentId The ID of the student.
+     * @param scheduleId The ID of the schedule.
+     */
+    public void enrollStudent(int studentId, int scheduleId) {
+        String sql = "INSERT INTO enrollments(student_id, schedule_id) VALUES(?,?)";
+        try (Connection conn = DatabaseConnection.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, studentId);
+            pstmt.setInt(2, scheduleId);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            // It's okay if it fails because the student is already enrolled (due to PRIMARY KEY constraint)
+            if (!e.getSQLState().equals("23505")) { // 23505 is unique_violation
+                System.err.println("Error enrolling student: " + e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Unenrolls a student from a schedule.
+     * @param studentId The ID of the student.
+     * @param scheduleId The ID of the schedule.
+     */
+    public void unenrollStudent(int studentId, int scheduleId) {
+        String sql = "DELETE FROM enrollments WHERE student_id = ? AND schedule_id = ?";
+        try (Connection conn = DatabaseConnection.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, studentId);
+            pstmt.setInt(2, scheduleId);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error unenrolling student: " + e.getMessage());
         }
     }
 }

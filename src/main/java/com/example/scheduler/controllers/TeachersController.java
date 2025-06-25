@@ -1,20 +1,21 @@
-// File: src/main/java/com/example/scheduler/controllers/TeachersController.java
 package com.example.scheduler.controllers;
 
 import com.example.scheduler.dao.AppDAO;
 import com.example.scheduler.models.Teacher;
+import com.jfoenix.controls.JFXTextField; // Import JFXTextField
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 public class TeachersController {
     @FXML private TableView<Teacher> teachersTable;
     @FXML private TableColumn<Teacher, String> nameColumn;
     @FXML private TableColumn<Teacher, String> subjectColumn;
-    @FXML private TextField nameField;
-    @FXML private TextField subjectField;
+    @FXML private JFXTextField nameField; // Use JFXTextField
+    @FXML private JFXTextField subjectField; // Use JFXTextField
 
     private final AppDAO dao = new AppDAO();
     private final ObservableList<Teacher> teacherList = FXCollections.observableArrayList();

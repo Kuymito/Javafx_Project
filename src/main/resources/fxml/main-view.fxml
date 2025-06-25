@@ -1,24 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.scheduler.controllers.MainViewController">
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.scheduler.controllers.MainViewController">
     <left>
-        <VBox alignment="TOP_CENTER" spacing="10" style="-fx-background-color: #34495E; -fx-padding: 10;">
+        <VBox fx:id="sidebar" spacing="10" style="-fx-background-color: #FAFAFA;" alignment="TOP_CENTER" prefWidth="220">
+            <padding>
+                <Insets top="20.0" />
+            </padding>
             <children>
-                <Label text="Scheduler" textFill="white">
-                    <font><Font name="Arial Bold" size="24.0" /></font>
-                    <padding><Insets bottom="20" /></padding>
+                <ImageView fitHeight="80.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@/images/school-logo.png" />
+                    </image>
+                </ImageView>
+                <Label text="University Scheduler" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #333;">
+                    <VBox.margin>
+                        <Insets bottom="20.0" />
+                    </VBox.margin>
                 </Label>
-                <Button onAction="#handleShowClassesView" prefWidth="150" text="Classes" style="-fx-background-color: #3498DB; -fx-text-fill: white;" />
-                <Button onAction="#handleShowTeachersView" prefWidth="150" text="Teachers" style="-fx-background-color: #3498DB; -fx-text-fill: white;" />
-                <Button onAction="#handleShowStudentsView" prefWidth="150" text="Students" style="-fx-background-color: #3498DB; -fx-text-fill: white;" />
+
+                <JFXButton onAction="#handleShowClassesView" styleClass="sidebar-button" text="Classes" />
+                <JFXButton onAction="#handleShowTeachersView" styleClass="sidebar-button" text="Teachers" />
+                <JFXButton onAction="#handleShowStudentsView" styleClass="sidebar-button" text="Students" />
+
+                <Region VBox.vgrow="ALWAYS" />
+
+                <VBox alignment="CENTER" spacing="10">
+                    <children>
+                        <ImageView fx:id="profileImageView" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@/images/default-profile.png" />
+                            </image>
+                        </ImageView>
+                        <Label text="Admin" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #555;" />
+                        <Label text="admin@school.com" style="-fx-font-size: 12px; -fx-text-fill: #777;" />
+                    </children>
+                    <padding>
+                        <Insets bottom="20.0" />
+                    </padding>
+                </VBox>
             </children>
         </VBox>
     </left>
     <center>
-        <StackPane fx:id="contentPane" style="-fx-background-color: #ECF0F1;" />
+        <StackPane fx:id="contentPane" style="-fx-background-color: #FFFFFF;"/>
     </center>
 </BorderPane>

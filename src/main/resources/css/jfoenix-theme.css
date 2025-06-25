@@ -1,0 +1,64 @@
+/* --- General Buttons --- */
+.jfx-button {
+    -fx-background-color: #2196F3; /* Blue */
+    -fx-text-fill: WHITE;
+    -fx-font-weight: BOLD;
+}
+
+/* --- Specific Buttons --- */
+.add-button {
+    -fx-background-color: #4CAF50; /* Green */
+}
+.update-button {
+    -fx-background-color: #FFC107; /* Amber */
+}
+.delete-button {
+    -fx-background-color: #F44336; /* Red */
+}
+
+/* --- Sidebar --- */
+.sidebar-button {
+    -fx-pref-width: 150px;
+    -fx-alignment: center-left;
+    -fx-background-color: transparent;
+    -fx-text-fill: #333333;
+}
+.sidebar-button:hover {
+    -fx-background-color: #E0E0E0;
+}
+
+
+/* --- TableView --- */
+.table-view {
+    -fx-background-color: transparent;
+    -fx-border-color: #E0E0E0;
+    -fx-border-radius: 4;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #F5F5F5;
+    -fx-border-color: transparent transparent #E0E0E0 transparent;
+    -fx-border-width: 2;
+}
+
+.table-view .column-header {
+    -fx-font-weight: bold;
+    -fx-padding: 12;
+    -fx-size: 13px;
+    -fx-text-fill: #333333;
+}
+
+.table-view .table-cell {
+    -fx-padding: 12;
+    -fx-border-color: transparent;
+    -fx-font-size: 13px;
+}
+
+.table-view .table-row-cell:hover {
+    -fx-background-color: #E8F5E9; /* A light green for hover */
+}
+
+.table-view .table-row-cell:selected {
+    -fx-background-color: #BBDEFB; /* A light blue for selection */
+    -fx-text-fill: black;
+}

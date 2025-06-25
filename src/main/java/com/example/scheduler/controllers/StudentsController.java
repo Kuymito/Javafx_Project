@@ -2,13 +2,12 @@ package com.example.scheduler.controllers;
 
 import com.example.scheduler.dao.AppDAO;
 import com.example.scheduler.models.Student;
+import com.jfoenix.controls.JFXTextField; // Import JFXTextField
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 public class StudentsController {
@@ -16,8 +15,8 @@ public class StudentsController {
     @FXML private TableView<Student> studentsTable;
     @FXML private TableColumn<Student, String> nameColumn;
     @FXML private TableColumn<Student, String> majorColumn;
-    @FXML private TextField nameField;
-    @FXML private TextField majorField;
+    @FXML private JFXTextField nameField; // Use JFXTextField
+    @FXML private JFXTextField majorField; // Use JFXTextField
 
     private final AppDAO dao = new AppDAO();
     private final ObservableList<Student> studentList = FXCollections.observableArrayList();

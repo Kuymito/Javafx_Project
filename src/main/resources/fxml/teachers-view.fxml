@@ -1,44 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXTextField?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.control.cell.PropertyValueFactory?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.scheduler.controllers.TeachersController">
-    <padding><Insets topRightBottomLeft="10" /></padding>
-    <top>
-        <Label text="Manage Teachers" BorderPane.alignment="CENTER">
-            <font><Font name="Arial Bold" size="20.0" /></font>
-        </Label>
-    </top>
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.scheduler.controllers.TeachersController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
     <center>
-        <TableView fx:id="teachersTable" BorderPane.margin="$x1">
+        <TableView fx:id="teachersTable" BorderPane.alignment="CENTER">
             <columns>
-                <TableColumn fx:id="nameColumn" prefWidth="300.0" text="Teacher Name" />
-                <TableColumn fx:id="subjectColumn" prefWidth="300.0" text="Subject" />
+                <TableColumn fx:id="nameColumn" prefWidth="150.0" text="Teacher Name" />
+                <TableColumn fx:id="subjectColumn" prefWidth="150.0" text="Subject" />
             </columns>
-            <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY" /></columnResizePolicy>
+            <BorderPane.margin>
+                <Insets right="20.0" />
+            </BorderPane.margin>
         </TableView>
     </center>
-    <bottom>
-        <VBox alignment="CENTER" spacing="10" style="-fx-padding: 20;">
-            <GridPane hgap="10" vgap="10" alignment="CENTER">
-                <TextField fx:id="nameField" promptText="Name" GridPane.columnIndex="0" GridPane.rowIndex="0" prefWidth="200"/>
-                <TextField fx:id="subjectField" promptText="Subject" GridPane.columnIndex="1" GridPane.rowIndex="0" prefWidth="200"/>
-            </GridPane>
-            <!-- NEW AND CORRECT CODE -->
-            <HBox alignment="CENTER" spacing="10.0">
-                <padding>
-                    <Insets top="10.0" />
-                </padding>
-                <children>
-                    <Button onAction="#handleAddButton" text="Add" />
-                    <Button onAction="#handleUpdateButton" text="Update Selected" />
-                    <Button onAction="#handleDeleteButton" text="Delete Selected" />
-                    <Button onAction="#handleClearButton" text="Clear Form" />
-                </children>
-            </HBox>
+    <right>
+        <VBox spacing="20.0" BorderPane.alignment="CENTER">
+            <children>
+                <Label text="Manage Teachers">
+                    <font>
+                        <Font name="System Bold" size="18.0" />
+                    </font>
+                </Label>
+                <JFXTextField fx:id="nameField" promptText="Teacher Name" />
+                <JFXTextField fx:id="subjectField" promptText="Subject" />
+                <HBox spacing="10.0">
+                    <children>
+                        <JFXButton onAction="#handleAddButton" styleClass="add-button" text="Add" />
+                        <JFXButton onAction="#handleUpdateButton" styleClass="update-button" text="Update" />
+                    </children>
+                </HBox>
+                <HBox spacing="10.0">
+                    <children>
+                        <JFXButton onAction="#handleDeleteButton" styleClass="delete-button" text="Delete" />
+                        <JFXButton onAction="#handleClearButton" text="Clear" />
+                    </children>
+                </HBox>
+            </children>
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
         </VBox>
-    </bottom>
+    </right>
 </BorderPane>

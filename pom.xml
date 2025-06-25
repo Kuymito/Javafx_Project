@@ -33,6 +33,12 @@
             <artifactId>postgresql</artifactId>
             <version>42.7.3</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.jfoenix</groupId>
+            <artifactId>jfoenix</artifactId>
+            <version>9.0.10</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -48,6 +54,10 @@
                 <version>0.0.8</version>
                 <configuration>
                     <mainClass>com.example.scheduler.Main</mainClass>
+                    <options>
+                        <option>--add-opens</option>
+                        <option>java.base/java.lang.reflect=ALL-UNNAMED</option>
+                    </options>
                 </configuration>
             </plugin>
         </plugins>
