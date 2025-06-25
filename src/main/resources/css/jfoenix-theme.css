@@ -1,30 +1,72 @@
-/* --- General Buttons --- */
+/* --- General & Clear Buttons --- */
 .jfx-button {
-    -fx-background-color: #2196F3; /* Blue */
-    -fx-text-fill: WHITE;
+    -fx-background-color: #E0E0E0;
+    -fx-text-fill: #212121;
     -fx-font-weight: BOLD;
+    -fx-background-radius: 5;
+    -fx-padding: 8 15 8 15;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 5, 0.5, 0, 1);
+    -fx-border-width: 0;
+}
+.jfx-button:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 8, 0.5, 0, 2);
+}
+.jfx-button:pressed {
+    -fx-effect: none;
+    -fx-background-color: #D5D5D5;
+}
+.jfx-button:disabled {
+    -fx-opacity: 0.6;
+    -fx-cursor: default;
+    -fx-effect: none;
 }
 
-/* --- Specific Buttons --- */
+/* --- Specific Buttons (Add, Update, Delete) --- */
 .add-button {
-    -fx-background-color: #4CAF50; /* Green */
+    -fx-background-color: #4CAF50; -fx-text-fill: WHITE;
 }
+.add-button:hover { -fx-background-color: #43A047; }
+.add-button:pressed { -fx-background-color: #388E3C; -fx-effect: none; }
+
 .update-button {
-    -fx-background-color: #FFC107; /* Amber */
+    -fx-background-color: #FFC107; -fx-text-fill: WHITE;
 }
+.update-button:hover { -fx-background-color: #FFA000; }
+.update-button:pressed { -fx-background-color: #F57F17; -fx-effect: none; }
+
 .delete-button {
-    -fx-background-color: #F44336; /* Red */
+    -fx-background-color: #F44336; -fx-text-fill: WHITE;
 }
+.delete-button:hover { -fx-background-color: #D32F2F; }
+.delete-button:pressed { -fx-background-color: #C62828; -fx-effect: none; }
+
 
 /* --- Sidebar --- */
 .sidebar-button {
-    -fx-pref-width: 150px;
+    -fx-max-width: infinity;
     -fx-alignment: center-left;
     -fx-background-color: transparent;
-    -fx-text-fill: #333333;
+    -fx-text-fill: #444444;
+    -fx-font-size: 14px;
+    -fx-padding: 12 10 12 30;
+    -fx-effect: none;
+    -fx-background-radius: 0;
 }
 .sidebar-button:hover {
-    -fx-background-color: #E0E0E0;
+    -fx-background-color: #EEEEEE; /* A lighter hover for non-active buttons */
+}
+
+/* The new, more specific style for the active button */
+.sidebar-button.active {
+    -fx-background-color: #D5D5D5;
+    -fx-font-weight: bold;
+    -fx-text-fill: #212121;
+}
+
+/* Ensure the active button stays highlighted even on hover */
+.sidebar-button.active:hover {
+    -fx-background-color: #D5D5D5;
 }
 
 
@@ -34,31 +76,26 @@
     -fx-border-color: #E0E0E0;
     -fx-border-radius: 4;
 }
-
 .table-view .column-header-background {
     -fx-background-color: #F5F5F5;
     -fx-border-color: transparent transparent #E0E0E0 transparent;
     -fx-border-width: 2;
 }
-
 .table-view .column-header {
     -fx-font-weight: bold;
     -fx-padding: 12;
     -fx-size: 13px;
     -fx-text-fill: #333333;
 }
-
 .table-view .table-cell {
     -fx-padding: 12;
     -fx-border-color: transparent;
     -fx-font-size: 13px;
 }
-
 .table-view .table-row-cell:hover {
-    -fx-background-color: #E8F5E9; /* A light green for hover */
+    -fx-background-color: #E8F5E9;
 }
-
 .table-view .table-row-cell:selected {
-    -fx-background-color: #BBDEFB; /* A light blue for selection */
+    -fx-background-color: #BBDEFB;
     -fx-text-fill: black;
 }

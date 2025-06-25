@@ -29,9 +29,9 @@
                     </VBox.margin>
                 </Label>
 
-                <JFXButton onAction="#handleShowClassesView" styleClass="sidebar-button" text="Classes" />
-                <JFXButton onAction="#handleShowTeachersView" styleClass="sidebar-button" text="Teachers" />
-                <JFXButton onAction="#handleShowStudentsView" styleClass="sidebar-button" text="Students" />
+                <JFXButton fx:id="classesButton" onAction="#handleShowClassesView" styleClass="sidebar-button" text="Classes" />
+                <JFXButton fx:id="teachersButton" onAction="#handleShowTeachersView" styleClass="sidebar-button" text="Teachers" />
+                <JFXButton fx:id="studentsButton" onAction="#handleShowStudentsView" styleClass="sidebar-button" text="Students" />
 
                 <Region VBox.vgrow="ALWAYS" />
 

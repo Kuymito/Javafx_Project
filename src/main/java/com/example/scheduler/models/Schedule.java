@@ -14,8 +14,11 @@ public class Schedule {
     private final StringProperty dayOfWeek = new SimpleStringProperty();
     private final StringProperty startTime = new SimpleStringProperty();
     private final StringProperty endTime = new SimpleStringProperty();
+    private final StringProperty semester = new SimpleStringProperty();
+    private final StringProperty group = new SimpleStringProperty();
+    private final StringProperty promotion = new SimpleStringProperty();
 
-    public Schedule(int id, String courseName, String roomNumber, String teacherName, String dayOfWeek, String startTime, String endTime) {
+    public Schedule(int id, String courseName, String roomNumber, String teacherName, String dayOfWeek, String startTime, String endTime, String semester, String group, String promotion) {
         this.setId(id);
         this.setCourseName(courseName);
         this.setRoomNumber(roomNumber);
@@ -23,6 +26,10 @@ public class Schedule {
         this.setDayOfWeek(dayOfWeek);
         this.setStartTime(startTime);
         this.setEndTime(endTime);
+        // Set new properties
+        this.setSemester(semester);
+        this.setGroup(group);
+        this.setPromotion(promotion);
     }
 
     // --- ID Property ---
@@ -59,4 +66,16 @@ public class Schedule {
     public String getEndTime() { return endTime.get(); }
     public StringProperty endTimeProperty() { return endTime; }
     public void setEndTime(String endTime) { this.endTime.set(endTime); }
+
+    public String getSemester() { return semester.get(); }
+    public StringProperty semesterProperty() { return semester; }
+    public void setSemester(String semester) { this.semester.set(semester); }
+
+    public String getGroup() { return group.get(); }
+    public StringProperty groupProperty() { return group; }
+    public void setGroup(String group) { this.group.set(group); }
+
+    public String getPromotion() { return promotion.get(); }
+    public StringProperty promotionProperty() { return promotion; }
+    public void setPromotion(String promotion) { this.promotion.set(promotion); }
 }

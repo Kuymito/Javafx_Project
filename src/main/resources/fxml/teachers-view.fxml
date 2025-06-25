@@ -18,8 +18,8 @@
     <center>
         <TableView fx:id="teachersTable" BorderPane.alignment="CENTER">
             <columns>
-                <TableColumn fx:id="nameColumn" prefWidth="150.0" text="Teacher Name" />
-                <TableColumn fx:id="subjectColumn" prefWidth="150.0" text="Subject" />
+                <TableColumn fx:id="nameColumn" prefWidth="200.0" text="Teacher Name" />
+                <TableColumn fx:id="subjectColumn" prefWidth="200.0" text="Subject" />
             </columns>
             <BorderPane.margin>
                 <Insets right="20.0" />
@@ -27,7 +27,7 @@
         </TableView>
     </center>
     <right>
-        <VBox spacing="20.0" BorderPane.alignment="CENTER">
+        <VBox spacing="15.0" prefWidth="250.0" BorderPane.alignment="CENTER">
             <children>
                 <Label text="Manage Teachers">
                     <font>
@@ -50,7 +50,7 @@
                 </HBox>
             </children>
             <padding>
-                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                <Insets top="10.0" />
             </padding>
         </VBox>
     </right>

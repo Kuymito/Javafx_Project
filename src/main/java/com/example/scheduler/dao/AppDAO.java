@@ -47,13 +47,9 @@ public class AppDAO {
     // --- Schedule (Class) CRUD Methods ---
 
     public List<Schedule> getAllSchedules() {
-        // This query now joins schedules with teachers to get the teacher's name
-        // and uses the correct column names with underscores.
-        String sql = "SELECT " +
-                "s.id, s.course_name, s.room_number, s.day_of_week, s.start_time, s.end_time, " +
-                "t.name AS teacher_name " +
-                "FROM schedules s " +
-                "LEFT JOIN teachers t ON s.teacher_id = t.id " +
+        String sql = "SELECT s.id, s.course_name, s.room_number, s.day_of_week, s.start_time, s.end_time, " +
+                "t.name AS teacher_name, s.semester, s.class_group, s.promotion " + // Add new columns
+                "FROM schedules s LEFT JOIN teachers t ON s.teacher_id = t.id " +
                 "ORDER BY s.day_of_week, s.start_time";
 
         List<Schedule> schedules = new ArrayList<>();
@@ -62,56 +58,62 @@ public class AppDAO {
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                // Create the schedule object using the correct column names from the result set
                 schedules.add(new Schedule(
                         rs.getInt("id"),
                         rs.getString("course_name"),
                         rs.getString("room_number"),
-                        rs.getString("teacher_name"), // This comes from the JOIN
+                        rs.getString("teacher_name"),
                         rs.getString("day_of_week"),
-                        rs.getString("start_time").substring(0, 5), // Get HH:MM part
-                        rs.getString("end_time").substring(0, 5)   // Get HH:MM part
+                        rs.getString("start_time") != null ? rs.getString("start_time").substring(0, 5) : "",
+                        rs.getString("end_time") != null ? rs.getString("end_time").substring(0, 5) : "",
+                        rs.getString("semester"),      // Get semester
+                        rs.getString("class_group"),   // Get group
+                        rs.getString("promotion")      // Get promotion
                 ));
             }
         } catch (SQLException e) {
-            System.err.println("Error fetching schedules with join: " + e.getMessage());
+            System.err.println("Error fetching schedules: " + e.getMessage());
         }
         return schedules;
     }
 
     public void addSchedule(Schedule schedule, int teacherId) {
-        // The SQL now correctly inserts into the teacher_id column
-        String sql = "INSERT INTO schedules(course_name, room_number, day_of_week, start_time, end_time, teacher_id) VALUES(?,?,?,?,?,?)";
+        String sql = "INSERT INTO schedules(course_name, room_number, day_of_week, start_time, end_time, teacher_id, semester, class_group, promotion) VALUES(?,?,?,?,?,?,?,?,?)";
         try (Connection conn = DatabaseConnection.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+            // ... (set existing parameters)
             pstmt.setString(1, schedule.getCourseName());
             pstmt.setString(2, schedule.getRoomNumber());
             pstmt.setString(3, schedule.getDayOfWeek());
-            // Converts the HH:MM string to a java.sql.Time object for the database
-            pstmt.setTime(4, java.sql.Time.valueOf(schedule.getStartTime() + ":00"));
-            pstmt.setTime(5, java.sql.Time.valueOf(schedule.getEndTime() + ":00"));
-            // This is the teacher's ID from the ComboBox
+            pstmt.setTime(4, schedule.getStartTime().isEmpty() ? null : java.sql.Time.valueOf(schedule.getStartTime() + ":00"));
+            pstmt.setTime(5, schedule.getEndTime().isEmpty() ? null : java.sql.Time.valueOf(schedule.getEndTime() + ":00"));
             pstmt.setInt(6, teacherId);
-
+            // Set new parameters
+            pstmt.setString(7, schedule.getSemester());
+            pstmt.setString(8, schedule.getGroup());
+            pstmt.setString(9, schedule.getPromotion());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.err.println("Error adding schedule: " + e.getMessage());
         }
     }
 
-    // You will also need a corrected updateSchedule method for later
     public void updateSchedule(Schedule schedule, int teacherId) {
-        String sql = "UPDATE schedules SET course_name = ?, room_number = ?, day_of_week = ?, start_time = ?, end_time = ?, teacher_id = ? WHERE id = ?";
+        String sql = "UPDATE schedules SET course_name = ?, room_number = ?, day_of_week = ?, start_time = ?, end_time = ?, teacher_id = ?, semester = ?, class_group = ?, promotion = ? WHERE id = ?";
         try (Connection conn = DatabaseConnection.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            // ... (set existing parameters)
             pstmt.setString(1, schedule.getCourseName());
             pstmt.setString(2, schedule.getRoomNumber());
             pstmt.setString(3, schedule.getDayOfWeek());
-            pstmt.setTime(4, java.sql.Time.valueOf(schedule.getStartTime() + ":00"));
-            pstmt.setTime(5, java.sql.Time.valueOf(schedule.getEndTime() + ":00"));
+            pstmt.setTime(4, schedule.getStartTime().isEmpty() ? null : java.sql.Time.valueOf(schedule.getStartTime() + ":00"));
+            pstmt.setTime(5, schedule.getEndTime().isEmpty() ? null : java.sql.Time.valueOf(schedule.getEndTime() + ":00"));
             pstmt.setInt(6, teacherId);
-            pstmt.setInt(7, schedule.getId());
+            // Set new parameters
+            pstmt.setString(7, schedule.getSemester());
+            pstmt.setString(8, schedule.getGroup());
+            pstmt.setString(9, schedule.getPromotion());
+            pstmt.setInt(10, schedule.getId());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.err.println("Error updating schedule: " + e.getMessage());

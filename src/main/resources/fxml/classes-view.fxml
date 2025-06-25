@@ -2,60 +2,116 @@
 
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXTextField?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.scheduler.controllers.ClassesController">
+    <padding>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+    </padding>
     <children>
         <Label text="Class and Enrollment Management">
             <font>
-                <Font name="System Bold" size="24.0" />
+                <Font name="System Bold" size="20.0" />
             </font>
             <padding>
-                <Insets bottom="10.0" left="10.0" top="10.0" />
+                <Insets bottom="10.0" />
             </padding>
         </Label>
-        <SplitPane dividerPositions="0.65" VBox.vgrow="ALWAYS">
-            <items>
-                <TableView fx:id="scheduleTable" />
-                <AnchorPane>
-                    <children>
-                        <VBox spacing="10.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+        <BorderPane VBox.vgrow="ALWAYS">
+            <center>
+                <SplitPane dividerPositions="0.7" BorderPane.alignment="CENTER">
+                    <items>
+                        <TableView fx:id="scheduleTable">
+                            <columns>
+                                <TableColumn fx:id="courseNameColumn" text="Course" />
+                                <TableColumn fx:id="teacherNameColumn" text="Teacher" />
+                                <TableColumn fx:id="semesterColumn" text="Semester" />
+                                <TableColumn fx:id="groupColumn" text="Group" />
+                                <TableColumn fx:id="promotionColumn" text="Promotion" />
+                                <TableColumn fx:id="dayOfWeekColumn" text="Day" />
+                                <TableColumn fx:id="timeColumn" text="Time" />
+                            </columns>
+                        </TableView>
+                        <AnchorPane>
                             <children>
-                                <Label fx:id="enrollmentLabel" text="Select a Class to See Enrollments">
-                                    <font>
-                                        <Font name="System Bold" size="16.0" />
-                                    </font>
-                                </Label>
-                                <TableView fx:id="enrolledStudentsTable" prefHeight="200.0" VBox.vgrow="ALWAYS">
-                                    <columns>
-                                        <TableColumn fx:id="studentNameColumn" prefWidth="150.0" text="Student Name" />
-                                    </columns>
-                                </TableView>
-                                <Label text="Enroll New Student">
-                                    <font>
-                                        <Font name="System Italic" size="14.0" />
-                                    </font>
-                                </Label>
-                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                <VBox spacing="15.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                                     <children>
-                                        <JFXComboBox fx:id="allStudentsComboBox" promptText="Select a Student" HBox.hgrow="ALWAYS" />
-                                        <JFXButton fx:id="enrollButton" onAction="#handleEnrollButton" text="Enroll" />
+                                        <Label fx:id="enrollmentLabel" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Select a Class" />
+                                        <TableView fx:id="enrolledStudentsTable" prefHeight="200.0" VBox.vgrow="ALWAYS">
+                                            <columns>
+                                                <TableColumn fx:id="studentNameColumn" prefWidth="200.0" text="Enrolled Students" />
+                                            </columns>
+                                        </TableView>
+                                        <Label style="-fx-font-style: italic;" text="Enroll New Student" />
+                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                            <children>
+                                                <JFXComboBox fx:id="allStudentsComboBox" HBox.hgrow="ALWAYS" promptText="Select Student" />
+                                                <JFXButton fx:id="enrollButton" onAction="#handleEnrollButton" text="Enroll" />
+                                            </children>
+                                        </HBox>
+                                        <JFXButton fx:id="unenrollButton" onAction="#handleUnenrollButton" prefWidth="300.0" styleClass="delete-button" text="Unenroll Selected Student" />
                                     </children>
-                                </HBox>
-                                <JFXButton fx:id="unenrollButton" onAction="#handleUnenrollButton" prefWidth="200.0" style="-fx-background-color: #F44336;" text="Unenroll Selected Student" />
+                                </VBox>
                             </children>
-                        </VBox>
+                        </AnchorPane>
+                    </items>
+                </SplitPane>
+            </center>
+            <bottom>
+                <VBox spacing="10.0" BorderPane.alignment="CENTER">
+                    <padding>
+                        <Insets top="20.0" />
+                    </padding>
+                    <children>
+                        <Label text="Class Management">
+                            <font>
+                                <Font name="System Bold" size="16.0" />
+                            </font>
+                        </Label>
+                        <HBox spacing="10.0">
+                            <children>
+                                <JFXTextField fx:id="courseNameField" HBox.hgrow="ALWAYS" promptText="Course Name" />
+                                <JFXTextField fx:id="roomNumberField" promptText="Room No." />
+                                <JFXComboBox fx:id="teacherComboBox" prefWidth="200.0" promptText="Teacher" />
+                            </children>
+                        </HBox>
+
+                        <HBox spacing="10.0">
+                            <children>
+                                <JFXTextField fx:id="semesterField" HBox.hgrow="ALWAYS" promptText="Semester"/>
+                                <JFXTextField fx:id="groupField" HBox.hgrow="ALWAYS" promptText="Group"/>
+                                <JFXTextField fx:id="promotionField" HBox.hgrow="ALWAYS" promptText="Promotion"/>
+                            </children>
+                        </HBox>
+
+                        <HBox spacing="10.0">
+                            <children>
+                                <JFXTextField fx:id="dayOfWeekField" HBox.hgrow="ALWAYS" promptText="Day of Week (e.g., Monday)" />
+                                <JFXTextField fx:id="startTimeField" HBox.hgrow="ALWAYS" promptText="Start Time (HH:MM)" />
+                                <JFXTextField fx:id="endTimeField" HBox.hgrow="ALWAYS" promptText="End Time (HH:MM)" />
+                            </children>
+                        </HBox>
+                        <HBox spacing="10.0">
+                            <children>
+                                <JFXButton onAction="#handleAddButton" styleClass="add-button" text="Add New Class" />
+                                <JFXButton onAction="#handleUpdateButton" styleClass="update-button" text="Update Selected Class" />
+                                <JFXButton onAction="#handleDeleteButton" styleClass="delete-button" text="Delete Selected Class" />
+                                <JFXButton onAction="#clearForm" text="Clear Form" />
+                            </children>
+                        </HBox>
                     </children>
-                </AnchorPane>
-            </items>
-        </SplitPane>
+                </VBox>
+            </bottom>
+        </BorderPane>
     </children>
 </VBox>

@@ -28,16 +28,24 @@ public class DatabaseConnection {
 
     public static void initializeDatabase() {
         String createUserTableSql = "CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, username TEXT NOT NULL UNIQUE, password TEXT NOT NULL, profile_picture_path TEXT);";
-        String createScheduleTableSql = "CREATE TABLE IF NOT EXISTS schedules (id SERIAL PRIMARY KEY, course_name TEXT NOT NULL, room_number TEXT, day_of_week TEXT, start_time TIME, end_time TIME, teacher_id INTEGER REFERENCES teachers(id));";
+
+        // Add semester, class_group, and promotion columns
+        String createScheduleTableSql = "CREATE TABLE IF NOT EXISTS schedules ("
+                + "id SERIAL PRIMARY KEY, "
+                + "course_name TEXT NOT NULL, "
+                + "room_number TEXT, "
+                + "day_of_week TEXT, "
+                + "start_time TIME, "
+                + "end_time TIME, "
+                + "teacher_id INTEGER REFERENCES teachers(id), "
+                + "semester TEXT, "
+                + "class_group TEXT, "
+                + "promotion TEXT"
+                + ");";
+
         String createTeachersTableSql = "CREATE TABLE IF NOT EXISTS teachers (id SERIAL PRIMARY KEY, name TEXT NOT NULL, subject TEXT NOT NULL);";
         String createStudentsTableSql = "CREATE TABLE IF NOT EXISTS students (id SERIAL PRIMARY KEY, name TEXT NOT NULL, major TEXT NOT NULL);";
-
-        // New enrollments table
-        String createEnrollmentsTableSql = "CREATE TABLE IF NOT EXISTS enrollments ("
-                + "schedule_id INTEGER REFERENCES schedules(id) ON DELETE CASCADE,"
-                + "student_id INTEGER REFERENCES students(id) ON DELETE CASCADE,"
-                + "PRIMARY KEY (schedule_id, student_id)"
-                + ");";
+        String createEnrollmentsTableSql = "CREATE TABLE IF NOT EXISTS enrollments (schedule_id INTEGER REFERENCES schedules(id) ON DELETE CASCADE, student_id INTEGER REFERENCES students(id) ON DELETE CASCADE, PRIMARY KEY (schedule_id, student_id));";
 
         String insertDefaultUser = "INSERT INTO users(username, password, profile_picture_path) SELECT 'admin', 'password', 'https://i.imgur.com/S8w42gM.png' WHERE NOT EXISTS (SELECT 1 FROM users WHERE username = 'admin');";
 
@@ -47,10 +55,10 @@ public class DatabaseConnection {
                 return;
             }
             stmt.execute(createUserTableSql);
-            stmt.execute(createTeachersTableSql); // Create teachers before schedules
-            stmt.execute(createStudentsTableSql); // Create students before enrollments
-            stmt.execute(createScheduleTableSql);
-            stmt.execute(createEnrollmentsTableSql); // Create the new table
+            stmt.execute(createTeachersTableSql);
+            stmt.execute(createStudentsTableSql);
+            stmt.execute(createScheduleTableSql); // This now includes the new columns
+            stmt.execute(createEnrollmentsTableSql);
             stmt.execute(insertDefaultUser);
             System.out.println("Database initialization check complete.");
         } catch (SQLException e) {
