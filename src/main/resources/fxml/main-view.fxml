@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.scheduler.controllers.MainViewController">
+    <left>
+        <VBox alignment="TOP_CENTER" spacing="10" style="-fx-background-color: #34495E; -fx-padding: 10;">
+            <children>
+                <Label text="Scheduler" textFill="white">
+                    <font><Font name="Arial Bold" size="24.0" /></font>
+                    <padding><Insets bottom="20" /></padding>
+                </Label>
+                <Button onAction="#handleShowClassesView" prefWidth="150" text="Classes" style="-fx-background-color: #3498DB; -fx-text-fill: white;" />
+                <Button onAction="#handleShowTeachersView" prefWidth="150" text="Teachers" style="-fx-background-color: #3498DB; -fx-text-fill: white;" />
+                <Button onAction="#handleShowStudentsView" prefWidth="150" text="Students" style="-fx-background-color: #3498DB; -fx-text-fill: white;" />
+            </children>
+        </VBox>
+    </left>
+    <center>
+        <StackPane fx:id="contentPane" style="-fx-background-color: #ECF0F1;" />
+    </center>
+</BorderPane>
