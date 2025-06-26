@@ -12,7 +12,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 public class TeachersController {
-    // --- Table ---
     @FXML private TableView<Teacher> teachersTable;
     @FXML private TableColumn<Teacher, String> firstNameColumn;
     @FXML private TableColumn<Teacher, String> lastNameColumn;
@@ -20,7 +19,6 @@ public class TeachersController {
     @FXML private TableColumn<Teacher, String> phoneColumn;
     @FXML private TableColumn<Teacher, String> degreeColumn;
 
-    // --- Form Fields ---
     @FXML private JFXTextField firstNameField;
     @FXML private JFXTextField lastNameField;
     @FXML private JFXTextField emailField;
@@ -29,25 +27,21 @@ public class TeachersController {
     @FXML private JFXTextField majorField;
     @FXML private JFXTextField addressField;
 
-    // --- Filter Fields ---
     @FXML private JFXTextField filterFirstNameField;
     @FXML private JFXTextField filterLastNameField;
     @FXML private JFXTextField filterMajorField;
 
-    // --- Data Lists ---
     private final AppDAO dao = new AppDAO();
     private final ObservableList<Teacher> masterTeacherList = FXCollections.observableArrayList();
     private FilteredList<Teacher> filteredTeacherList;
 
     @FXML
     private void initialize() {
-        // Setup Filtering
         filteredTeacherList = new FilteredList<>(masterTeacherList, p -> true);
         filterFirstNameField.textProperty().addListener((obs, oldVal, newVal) -> applyFilters());
         filterLastNameField.textProperty().addListener((obs, oldVal, newVal) -> applyFilters());
         filterMajorField.textProperty().addListener((obs, oldVal, newVal) -> applyFilters());
 
-        // Setup Table Columns
         firstNameColumn.setCellValueFactory(new PropertyValueFactory<>("firstName"));
         lastNameColumn.setCellValueFactory(new PropertyValueFactory<>("lastName"));
         emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
@@ -55,7 +49,7 @@ public class TeachersController {
         degreeColumn.setCellValueFactory(new PropertyValueFactory<>("degree"));
 
         loadTeacherData();
-        teachersTable.setItems(filteredTeacherList); // Bind table to the filtered list
+        teachersTable.setItems(filteredTeacherList);
 
         teachersTable.getSelectionModel().selectedItemProperty().addListener(
                 (obs, oldSelection, newSelection) -> populateForm(newSelection));

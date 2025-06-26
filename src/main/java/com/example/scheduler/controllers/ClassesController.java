@@ -105,7 +105,6 @@ public class ClassesController {
         loadAllTeachersData();
     }
 
-    // --- Setup Methods ---
     private void setupScheduleTable() {
         // This method should be fully implemented to define your scheduleTable columns
         TableColumn<Schedule, String> courseCol = new TableColumn<>("Course");
@@ -170,7 +169,6 @@ public class ClassesController {
     private void loadEnrolledStudents(int scheduleId) { enrolledStudentList.setAll(dao.getStudentsForSchedule(scheduleId)); }
 
 
-    // --- Class Management Handlers ---
     @FXML
     private void handleAddButton() {
         Teacher selectedTeacher = teacherComboBox.getSelectionModel().getSelectedItem();
@@ -213,7 +211,6 @@ public class ClassesController {
         Student selectedStudent = allStudentsComboBox.getSelectionModel().getSelectedItem();
 
         if (selectedSchedule != null && selectedStudent != null) {
-            // --- NEW: Semester Validation Logic ---
             String classSemester = selectedSchedule.getSemester();
             String studentSemester = selectedStudent.getSemester();
 

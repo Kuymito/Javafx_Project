@@ -95,7 +95,9 @@
 .table-view .table-row-cell:hover {
     -fx-background-color: #E8F5E9;
 }
+
+/* --- UPDATED --- */
 .table-view .table-row-cell:selected {
-    -fx-background-color: #BBDEFB;
-    -fx-text-fill: black;
+    -fx-background-color: #1976D2; /* A darker, more prominent blue */
+    -fx-text-fill: white; /* White text for high contrast */
 }

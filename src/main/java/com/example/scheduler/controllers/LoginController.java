@@ -1,5 +1,6 @@
 package com.example.scheduler.controllers;
 
+import com.example.scheduler.Main;
 import com.example.scheduler.dao.AppDAO;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
@@ -17,19 +18,27 @@ public class LoginController {
     @FXML private JFXButton loginButton;
     @FXML private Label statusLabel;
 
+    private Main mainApp;
     private final AppDAO appDAO = new AppDAO();
 
     @FXML
     private void handleLoginButtonAction() {
-        String profilePicPath = appDAO.validateUser(usernameField.getText(), passwordField.getText());
-        if (profilePicPath != null) {
-            openMainWindow(profilePicPath); // Pass the path
-            Stage stage = (Stage) loginButton.getScene().getWindow();
-            stage.close();
+        String username = usernameField.getText();
+        String password = passwordField.getText();
+
+        if (appDAO.validateUser(username, password)) {
+            String profilePicPath = appDAO.getProfilePicturePath(username);
+
+            mainApp.showMainScreen(profilePicPath);
         } else {
             statusLabel.setText("Invalid username or password.");
         }
     }
+
+    public void setMainApp(Main mainApp) {
+        this.mainApp = mainApp;
+    }
+
 
     private void openMainWindow(String profilePicPath) {
         try {

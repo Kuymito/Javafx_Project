@@ -1,5 +1,6 @@
 package com.example.scheduler.controllers;
 
+import com.example.scheduler.Main;
 import com.jfoenix.controls.JFXButton;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -8,33 +9,36 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
 public class MainViewController {
-    // --- FXML View Components ---
     @FXML private StackPane contentPane;
     @FXML private ImageView profileImageView;
+    @FXML private JFXButton logoutButton;
 
-    // --- FXML Sidebar Buttons ---
     @FXML private JFXButton classesButton;
     @FXML private JFXButton teachersButton;
     @FXML private JFXButton studentsButton;
 
     private List<JFXButton> sidebarButtons;
+    private Main mainApp;
 
     @FXML
     private void initialize() {
-        sidebarButtons = List.of(classesButton, teachersButton, studentsButton);
-
+        sidebarButtons = List.of(classesButton, teachersButton, studentsButton, logoutButton);
         if (profileImageView != null) {
             Circle clip = new Circle(35, 35, 35);
             profileImageView.setClip(clip);
         }
-
         handleShowClassesView();
+    }
+
+    public void setMainApp(Main mainApp) {
+        this.mainApp = mainApp;
     }
 
     public void setProfilePicture(String imagePath) {
@@ -42,10 +46,8 @@ public class MainViewController {
         if (imagePath != null && !imagePath.isEmpty()) {
             try {
                 if (imagePath.startsWith("http")) {
-                    // It's a web URL
-                    image = new Image(imagePath, true); // true for background loading
+                    image = new Image(imagePath, true);
                 } else {
-                    // It's a local resource path
                     URL resourceUrl = getClass().getResource(imagePath);
                     if (resourceUrl != null) {
                         image = new Image(resourceUrl.toExternalForm());
@@ -61,14 +63,13 @@ public class MainViewController {
         if (image != null) {
             profileImageView.setImage(image);
         } else {
-            // Set a default placeholder image if loading fails or path is null
+
             URL defaultUrl = getClass().getResource("/images/default-profile.png");
             if(defaultUrl != null) {
                 profileImageView.setImage(new Image(defaultUrl.toExternalForm()));
             }
         }
 
-        // Apply a circular clip to the ImageView
         Circle clip = new Circle(35, 35, 35);
         profileImageView.setClip(clip);
     }
@@ -106,5 +107,10 @@ public class MainViewController {
             button.getStyleClass().remove("active");
         }
         activeButton.getStyleClass().add("active");
+    }
+
+    @FXML
+    private void handleLogoutButton() {
+        mainApp.showLoginScreen();
     }
 }

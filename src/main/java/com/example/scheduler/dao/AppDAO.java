@@ -24,8 +24,9 @@ public class AppDAO {
      * @param password The password to check.
      * @return The profile picture path if credentials are valid, null otherwise.
      */
-    public String validateUser(String username, String password) {
-        String sql = "SELECT profile_picture_path FROM users WHERE username = ? AND password = ?";
+    public boolean validateUser(String username, String password) {
+        // This query now only checks for existence, which is faster and more secure.
+        String sql = "SELECT 1 FROM users WHERE username = ? AND password = ?";
         try (Connection conn = DatabaseConnection.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
@@ -33,15 +34,15 @@ public class AppDAO {
             pstmt.setString(2, password);
 
             try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getString("profile_picture_path");
-                }
+                // If a record is found, rs.next() will be true
+                return rs.next();
             }
         } catch (SQLException e) {
             System.err.println("User validation error: " + e.getMessage());
+            return false;
         }
-        return null; // Return null if validation fails
     }
+
 
 
     // --- Schedule (Class) CRUD Methods ---
@@ -321,5 +322,23 @@ public class AppDAO {
         } catch (SQLException e) {
             System.err.println("Error unenrolling student: " + e.getMessage());
         }
+    }
+
+    public String getProfilePicturePath(String username) {
+        String sql = "SELECT profile_picture_path FROM users WHERE username = ?";
+        try (Connection conn = DatabaseConnection.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, username);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("profile_picture_path");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching profile picture path: " + e.getMessage());
+        }
+        return null;
     }
 }

@@ -42,13 +42,11 @@ public class StudentsController {
 
     @FXML
     private void initialize() {
-        // Setup Filtering
         filteredStudentList = new FilteredList<>(masterStudentList, p -> true);
         filterFirstNameField.textProperty().addListener((obs, oldVal, newVal) -> applyFilters());
         filterLastNameField.textProperty().addListener((obs, oldVal, newVal) -> applyFilters());
         filterMajorField.textProperty().addListener((obs, oldVal, newVal) -> applyFilters());
 
-        // Setup Table Columns
         firstNameColumn.setCellValueFactory(new PropertyValueFactory<>("firstName"));
         lastNameColumn.setCellValueFactory(new PropertyValueFactory<>("lastName"));
         emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
