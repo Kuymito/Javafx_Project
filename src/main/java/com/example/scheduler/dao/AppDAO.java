@@ -47,8 +47,11 @@ public class AppDAO {
     // --- Schedule (Class) CRUD Methods ---
 
     public List<Schedule> getAllSchedules() {
+        // *** THE FIX IS IN THIS SQL QUERY ***
+        // We now select first_name and last_name and concatenate them for the teacher's full name.
         String sql = "SELECT s.id, s.course_name, s.room_number, s.day_of_week, s.start_time, s.end_time, " +
-                "t.name AS teacher_name, s.semester, s.class_group, s.promotion " + // Add new columns
+                "t.first_name, t.last_name, " + // Select the new columns
+                "s.semester, s.class_group, s.promotion " +
                 "FROM schedules s LEFT JOIN teachers t ON s.teacher_id = t.id " +
                 "ORDER BY s.day_of_week, s.start_time";
 
@@ -58,17 +61,20 @@ public class AppDAO {
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
+                // Combine first and last name into a full name for the Schedule object
+                String teacherFullName = rs.getString("first_name") + " " + rs.getString("last_name");
+
                 schedules.add(new Schedule(
                         rs.getInt("id"),
                         rs.getString("course_name"),
                         rs.getString("room_number"),
-                        rs.getString("teacher_name"),
+                        teacherFullName, // Use the combined full name
                         rs.getString("day_of_week"),
                         rs.getString("start_time") != null ? rs.getString("start_time").substring(0, 5) : "",
                         rs.getString("end_time") != null ? rs.getString("end_time").substring(0, 5) : "",
-                        rs.getString("semester"),      // Get semester
-                        rs.getString("class_group"),   // Get group
-                        rs.getString("promotion")      // Get promotion
+                        rs.getString("semester"),
+                        rs.getString("class_group"),
+                        rs.getString("promotion")
                 ));
             }
         } catch (SQLException e) {
@@ -135,43 +141,45 @@ public class AppDAO {
     // --- Teacher CRUD Methods ---
 
     public List<Teacher> getAllTeachers() {
-        String sql = "SELECT * FROM teachers ORDER BY name";
+        String sql = "SELECT * FROM teachers ORDER BY first_name, last_name";
         List<Teacher> teachers = new ArrayList<>();
         try (Connection conn = DatabaseConnection.connect();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                teachers.add(new Teacher(rs.getInt("id"), rs.getString("name"), rs.getString("subject")));
+                teachers.add(new Teacher(rs.getInt("id"), rs.getString("first_name"), rs.getString("last_name"), rs.getString("email"), rs.getString("phone_number"), rs.getString("degree"), rs.getString("major"), rs.getString("address")));
             }
-        } catch (SQLException e) {
-            System.err.println("Error fetching teachers: " + e.getMessage());
-        }
+        } catch (SQLException e) { System.err.println("Error fetching teachers: " + e.getMessage()); }
         return teachers;
     }
 
     public void addTeacher(Teacher teacher) {
-        String sql = "INSERT INTO teachers(name, subject) VALUES(?,?)";
-        try (Connection conn = DatabaseConnection.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, teacher.getName());
-            pstmt.setString(2, teacher.getSubject());
+        String sql = "INSERT INTO teachers(first_name, last_name, email, phone_number, degree, major, address) VALUES(?,?,?,?,?,?,?)";
+        try (Connection conn = DatabaseConnection.connect(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, teacher.getFirstName());
+            pstmt.setString(2, teacher.getLastName());
+            pstmt.setString(3, teacher.getEmail());
+            pstmt.setString(4, teacher.getPhoneNumber());
+            pstmt.setString(5, teacher.getDegree());
+            pstmt.setString(6, teacher.getMajor());
+            pstmt.setString(7, teacher.getAddress());
             pstmt.executeUpdate();
-        } catch (SQLException e) {
-            System.err.println("Error adding teacher: " + e.getMessage());
-        }
+        } catch (SQLException e) { System.err.println("Error adding teacher: " + e.getMessage()); }
     }
 
     public void updateTeacher(Teacher teacher) {
-        String sql = "UPDATE teachers SET name = ?, subject = ? WHERE id = ?";
-        try (Connection conn = DatabaseConnection.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, teacher.getName());
-            pstmt.setString(2, teacher.getSubject());
-            pstmt.setInt(3, teacher.getId());
+        String sql = "UPDATE teachers SET first_name = ?, last_name = ?, email = ?, phone_number = ?, degree = ?, major = ?, address = ? WHERE id = ?";
+        try (Connection conn = DatabaseConnection.connect(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, teacher.getFirstName());
+            pstmt.setString(2, teacher.getLastName());
+            pstmt.setString(3, teacher.getEmail());
+            pstmt.setString(4, teacher.getPhoneNumber());
+            pstmt.setString(5, teacher.getDegree());
+            pstmt.setString(6, teacher.getMajor());
+            pstmt.setString(7, teacher.getAddress());
+            pstmt.setInt(8, teacher.getId());
             pstmt.executeUpdate();
-        } catch (SQLException e) {
-            System.err.println("Error updating teacher: " + e.getMessage());
-        }
+        } catch (SQLException e) { System.err.println("Error updating teacher: " + e.getMessage()); }
     }
 
     public void deleteTeacher(int id) {
@@ -189,43 +197,46 @@ public class AppDAO {
     // --- Student CRUD Methods ---
 
     public List<Student> getAllStudents() {
-        String sql = "SELECT * FROM students ORDER BY name";
+        String sql = "SELECT * FROM students ORDER BY first_name, last_name";
         List<Student> students = new ArrayList<>();
         try (Connection conn = DatabaseConnection.connect();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                students.add(new Student(rs.getInt("id"), rs.getString("name"), rs.getString("major")));
+                students.add(new Student(rs.getInt("id"), rs.getString("first_name"), rs.getString("last_name"), rs.getString("email"), rs.getString("phone_number"), rs.getString("major"), rs.getString("semester"), rs.getString("address")));
             }
-        } catch (SQLException e) {
-            System.err.println("Error fetching students: " + e.getMessage());
-        }
+        } catch (SQLException e) { System.err.println("Error fetching students: " + e.getMessage()); }
         return students;
     }
 
+
     public void addStudent(Student student) {
-        String sql = "INSERT INTO students(name, major) VALUES(?,?)";
-        try (Connection conn = DatabaseConnection.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, student.getName());
-            pstmt.setString(2, student.getMajor());
+        String sql = "INSERT INTO students(first_name, last_name, email, phone_number, major, semester, address) VALUES(?,?,?,?,?,?,?)";
+        try (Connection conn = DatabaseConnection.connect(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, student.getFirstName());
+            pstmt.setString(2, student.getLastName());
+            pstmt.setString(3, student.getEmail());
+            pstmt.setString(4, student.getPhoneNumber());
+            pstmt.setString(5, student.getMajor());
+            pstmt.setString(6, student.getSemester());
+            pstmt.setString(7, student.getAddress());
             pstmt.executeUpdate();
-        } catch (SQLException e) {
-            System.err.println("Error adding student: " + e.getMessage());
-        }
+        } catch (SQLException e) { System.err.println("Error adding student: " + e.getMessage()); }
     }
 
     public void updateStudent(Student student) {
-        String sql = "UPDATE students SET name = ?, major = ? WHERE id = ?";
-        try (Connection conn = DatabaseConnection.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, student.getName());
-            pstmt.setString(2, student.getMajor());
-            pstmt.setInt(3, student.getId());
+        String sql = "UPDATE students SET first_name = ?, last_name = ?, email = ?, phone_number = ?, major = ?, semester = ?, address = ? WHERE id = ?";
+        try (Connection conn = DatabaseConnection.connect(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, student.getFirstName());
+            pstmt.setString(2, student.getLastName());
+            pstmt.setString(3, student.getEmail());
+            pstmt.setString(4, student.getPhoneNumber());
+            pstmt.setString(5, student.getMajor());
+            pstmt.setString(6, student.getSemester());
+            pstmt.setString(7, student.getAddress());
+            pstmt.setInt(8, student.getId());
             pstmt.executeUpdate();
-        } catch (SQLException e) {
-            System.err.println("Error updating student: " + e.getMessage());
-        }
+        } catch (SQLException e) { System.err.println("Error updating student: " + e.getMessage()); }
     }
 
     public void deleteStudent(int id) {
@@ -245,7 +256,9 @@ public class AppDAO {
      * @return A list of enrolled students.
      */
     public List<Student> getStudentsForSchedule(int scheduleId) {
-        String sql = "SELECT s.id, s.name, s.major FROM students s " +
+        // *** THE FIX IS IN THIS SQL QUERY ***
+        // Select all columns from the students table instead of specific old ones.
+        String sql = "SELECT s.* FROM students s " +
                 "JOIN enrollments e ON s.id = e.student_id " +
                 "WHERE e.schedule_id = ?";
         List<Student> enrolledStudents = new ArrayList<>();
@@ -254,7 +267,17 @@ public class AppDAO {
             pstmt.setInt(1, scheduleId);
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    enrolledStudents.add(new Student(rs.getInt("id"), rs.getString("name"), rs.getString("major")));
+                    // Construct the Student object using all the new fields
+                    enrolledStudents.add(new Student(
+                            rs.getInt("id"),
+                            rs.getString("first_name"),
+                            rs.getString("last_name"),
+                            rs.getString("email"),
+                            rs.getString("phone_number"),
+                            rs.getString("major"),
+                            rs.getString("semester"),
+                            rs.getString("address")
+                    ));
                 }
             }
         } catch (SQLException e) {

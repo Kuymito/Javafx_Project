@@ -7,7 +7,10 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -15,11 +18,40 @@
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
+    <top>
+        <VBox spacing="10.0" BorderPane.alignment="CENTER">
+            <children>
+                <Label text="Teacher Management">
+                    <font>
+                        <Font name="System Bold" size="20.0" />
+                    </font>
+                </Label>
+                <HBox alignment="CENTER_LEFT" spacing="10.0" style="-fx-background-color: #F5F5F5; -fx-padding: 10; -fx-background-radius: 5;">
+                    <children>
+                        <Label text="Filter by:">
+                            <font>
+                                <Font name="System Bold" size="14.0" />
+                            </font>
+                        </Label>
+                        <JFXTextField fx:id="filterFirstNameField" promptText="First Name" HBox.hgrow="ALWAYS" />
+                        <JFXTextField fx:id="filterLastNameField" promptText="Last Name" HBox.hgrow="ALWAYS" />
+                        <JFXTextField fx:id="filterMajorField" promptText="Major" HBox.hgrow="ALWAYS" />
+                    </children>
+                </HBox>
+            </children>
+            <padding>
+                <Insets bottom="10.0" />
+            </padding>
+        </VBox>
+    </top>
     <center>
         <TableView fx:id="teachersTable" BorderPane.alignment="CENTER">
             <columns>
-                <TableColumn fx:id="nameColumn" prefWidth="200.0" text="Teacher Name" />
-                <TableColumn fx:id="subjectColumn" prefWidth="200.0" text="Subject" />
+                <TableColumn fx:id="firstNameColumn" prefWidth="120.0" text="First Name" />
+                <TableColumn fx:id="lastNameColumn" prefWidth="120.0" text="Last Name" />
+                <TableColumn fx:id="emailColumn" prefWidth="180.0" text="Email" />
+                <TableColumn fx:id="phoneColumn" prefWidth="120.0" text="Phone" />
+                <TableColumn fx:id="degreeColumn" prefWidth="100.0" text="Degree" />
             </columns>
             <BorderPane.margin>
                 <Insets right="20.0" />
@@ -27,15 +59,35 @@
         </TableView>
     </center>
     <right>
-        <VBox spacing="15.0" prefWidth="250.0" BorderPane.alignment="CENTER">
+        <VBox spacing="15.0" prefWidth="300.0" BorderPane.alignment="CENTER">
             <children>
-                <Label text="Manage Teachers">
+                <Label text="Manage Teacher Details">
                     <font>
                         <Font name="System Bold" size="18.0" />
                     </font>
                 </Label>
-                <JFXTextField fx:id="nameField" promptText="Teacher Name" />
-                <JFXTextField fx:id="subjectField" promptText="Subject" />
+                <GridPane hgap="10.0" vgap="10.0">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                    <children>
+                        <JFXTextField fx:id="firstNameField" promptText="First Name" GridPane.columnIndex="0" />
+                        <JFXTextField fx:id="lastNameField" promptText="Last Name" GridPane.columnIndex="1" />
+                        <JFXTextField fx:id="emailField" promptText="Email" GridPane.columnSpan="2" GridPane.rowIndex="1" />
+                        <JFXTextField fx:id="phoneNumberField" promptText="Phone Number" GridPane.columnSpan="2" GridPane.rowIndex="2" />
+                        <JFXTextField fx:id="degreeField" promptText="Degree" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                        <JFXTextField fx:id="majorField" promptText="Major" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <JFXTextField fx:id="addressField" promptText="Address" GridPane.columnSpan="2" GridPane.rowIndex="4" />
+                    </children>
+                </GridPane>
                 <HBox spacing="10.0">
                     <children>
                         <JFXButton onAction="#handleAddButton" styleClass="add-button" text="Add" />

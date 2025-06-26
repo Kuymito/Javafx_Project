@@ -27,6 +27,19 @@
                 <Insets bottom="10.0" />
             </padding>
         </Label>
+        <HBox alignment="CENTER_LEFT" spacing="10.0" style="-fx-background-color: #F5F5F5; -fx-padding: 10; -fx-background-radius: 5;">
+            <children>
+                <Label text="Filter by:">
+                    <font>
+                        <Font name="System Bold" size="14.0" />
+                    </font>
+                </Label>
+                <JFXTextField fx:id="filterCourseField" promptText="Course Name" HBox.hgrow="ALWAYS" />
+                <JFXTextField fx:id="filterTeacherField" promptText="Teacher" HBox.hgrow="ALWAYS" />
+                <JFXTextField fx:id="filterSemesterField" promptText="Semester" HBox.hgrow="ALWAYS" />
+                <JFXTextField fx:id="filterGroupField" promptText="Group" HBox.hgrow="ALWAYS" />
+            </children>
+        </HBox>
         <BorderPane VBox.vgrow="ALWAYS">
             <center>
                 <SplitPane dividerPositions="0.7" BorderPane.alignment="CENTER">
@@ -105,6 +118,7 @@
                                 <JFXButton onAction="#handleUpdateButton" styleClass="update-button" text="Update Selected Class" />
                                 <JFXButton onAction="#handleDeleteButton" styleClass="delete-button" text="Delete Selected Class" />
                                 <JFXButton onAction="#clearForm" text="Clear Form" />
+                                <JFXButton onAction="#handleExportToPDF" text="Export to PDF" style="-fx-background-color: #607D8B; -fx-text-fill: white;" />
                             </children>
                         </HBox>
                     </children>
