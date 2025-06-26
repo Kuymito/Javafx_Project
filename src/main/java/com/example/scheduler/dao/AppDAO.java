@@ -46,29 +46,27 @@ public class AppDAO {
 
     // --- Schedule (Class) CRUD Methods ---
 
+
     public List<Schedule> getAllSchedules() {
-        // *** THE FIX IS IN THIS SQL QUERY ***
-        // We now select first_name and last_name and concatenate them for the teacher's full name.
-        String sql = "SELECT s.id, s.course_name, s.room_number, s.day_of_week, s.start_time, s.end_time, " +
-                "t.first_name, t.last_name, " + // Select the new columns
-                "s.semester, s.class_group, s.promotion " +
+        String sql = "SELECT s.*, t.first_name, t.last_name " +
                 "FROM schedules s LEFT JOIN teachers t ON s.teacher_id = t.id " +
                 "ORDER BY s.day_of_week, s.start_time";
-
         List<Schedule> schedules = new ArrayList<>();
         try (Connection conn = DatabaseConnection.connect();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                // Combine first and last name into a full name for the Schedule object
-                String teacherFullName = rs.getString("first_name") + " " + rs.getString("last_name");
+                String teacherFirstName = rs.getString("first_name");
+                String teacherLastName = rs.getString("last_name");
+                String teacherFullName = (teacherFirstName == null && teacherLastName == null) ? "N/A" : teacherFirstName + " " + teacherLastName;
 
                 schedules.add(new Schedule(
                         rs.getInt("id"),
                         rs.getString("course_name"),
+                        rs.getString("major"),
                         rs.getString("room_number"),
-                        teacherFullName, // Use the combined full name
+                        teacherFullName,
                         rs.getString("day_of_week"),
                         rs.getString("start_time") != null ? rs.getString("start_time").substring(0, 5) : "",
                         rs.getString("end_time") != null ? rs.getString("end_time").substring(0, 5) : "",
@@ -84,20 +82,21 @@ public class AppDAO {
     }
 
     public void addSchedule(Schedule schedule, int teacherId) {
-        String sql = "INSERT INTO schedules(course_name, room_number, day_of_week, start_time, end_time, teacher_id, semester, class_group, promotion) VALUES(?,?,?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO schedules(course_name, major, room_number, day_of_week, start_time, end_time, teacher_id, semester, class_group, promotion) VALUES(?,?,?,?,?,?,?,?,?,?)";
         try (Connection conn = DatabaseConnection.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            // ... (set existing parameters)
+
             pstmt.setString(1, schedule.getCourseName());
-            pstmt.setString(2, schedule.getRoomNumber());
-            pstmt.setString(3, schedule.getDayOfWeek());
-            pstmt.setTime(4, schedule.getStartTime().isEmpty() ? null : java.sql.Time.valueOf(schedule.getStartTime() + ":00"));
-            pstmt.setTime(5, schedule.getEndTime().isEmpty() ? null : java.sql.Time.valueOf(schedule.getEndTime() + ":00"));
-            pstmt.setInt(6, teacherId);
-            // Set new parameters
-            pstmt.setString(7, schedule.getSemester());
-            pstmt.setString(8, schedule.getGroup());
-            pstmt.setString(9, schedule.getPromotion());
+            pstmt.setString(2, schedule.getMajor());
+            pstmt.setString(3, schedule.getRoomNumber());
+            pstmt.setString(4, schedule.getDayOfWeek());
+            pstmt.setTime(5, schedule.getStartTime().isEmpty() ? null : java.sql.Time.valueOf(schedule.getStartTime() + ":00"));
+            pstmt.setTime(6, schedule.getEndTime().isEmpty() ? null : java.sql.Time.valueOf(schedule.getEndTime() + ":00"));
+            pstmt.setInt(7, teacherId);
+            pstmt.setString(8, schedule.getSemester());
+            pstmt.setString(9, schedule.getGroup());
+            pstmt.setString(10, schedule.getPromotion());
+
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.err.println("Error adding schedule: " + e.getMessage());
@@ -105,21 +104,22 @@ public class AppDAO {
     }
 
     public void updateSchedule(Schedule schedule, int teacherId) {
-        String sql = "UPDATE schedules SET course_name = ?, room_number = ?, day_of_week = ?, start_time = ?, end_time = ?, teacher_id = ?, semester = ?, class_group = ?, promotion = ? WHERE id = ?";
+        String sql = "UPDATE schedules SET course_name = ?, major = ?, room_number = ?, day_of_week = ?, start_time = ?, end_time = ?, teacher_id = ?, semester = ?, class_group = ?, promotion = ? WHERE id = ?";
         try (Connection conn = DatabaseConnection.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            // ... (set existing parameters)
+
             pstmt.setString(1, schedule.getCourseName());
-            pstmt.setString(2, schedule.getRoomNumber());
-            pstmt.setString(3, schedule.getDayOfWeek());
-            pstmt.setTime(4, schedule.getStartTime().isEmpty() ? null : java.sql.Time.valueOf(schedule.getStartTime() + ":00"));
-            pstmt.setTime(5, schedule.getEndTime().isEmpty() ? null : java.sql.Time.valueOf(schedule.getEndTime() + ":00"));
-            pstmt.setInt(6, teacherId);
-            // Set new parameters
-            pstmt.setString(7, schedule.getSemester());
-            pstmt.setString(8, schedule.getGroup());
-            pstmt.setString(9, schedule.getPromotion());
-            pstmt.setInt(10, schedule.getId());
+            pstmt.setString(2, schedule.getMajor());
+            pstmt.setString(3, schedule.getRoomNumber());
+            pstmt.setString(4, schedule.getDayOfWeek());
+            pstmt.setTime(5, schedule.getStartTime().isEmpty() ? null : java.sql.Time.valueOf(schedule.getStartTime() + ":00"));
+            pstmt.setTime(6, schedule.getEndTime().isEmpty() ? null : java.sql.Time.valueOf(schedule.getEndTime() + ":00"));
+            pstmt.setInt(7, teacherId);
+            pstmt.setString(8, schedule.getSemester());
+            pstmt.setString(9, schedule.getGroup());
+            pstmt.setString(10, schedule.getPromotion());
+            pstmt.setInt(11, schedule.getId());
+
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.err.println("Error updating schedule: " + e.getMessage());

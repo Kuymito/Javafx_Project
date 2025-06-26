@@ -29,10 +29,11 @@ public class DatabaseConnection {
     public static void initializeDatabase() {
         String createUserTableSql = "CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, username TEXT NOT NULL UNIQUE, password TEXT NOT NULL, profile_picture_path TEXT);";
 
-        // Add semester, class_group, and promotion columns
+
         String createScheduleTableSql = "CREATE TABLE IF NOT EXISTS schedules ("
                 + "id SERIAL PRIMARY KEY, "
                 + "course_name TEXT NOT NULL, "
+                + "major TEXT, "
                 + "room_number TEXT, "
                 + "day_of_week TEXT, "
                 + "start_time TIME, "

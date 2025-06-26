@@ -36,43 +36,33 @@ import static com.itextpdf.svg.converter.SvgConverter.createPdf;
 
 public class ClassesController {
 
-    // --- FXML Fields for Class Management ---
-    @FXML private JFXTextField courseNameField;
-    @FXML private JFXTextField roomNumberField;
+    // --- FXML Fields ---
+    @FXML private JFXTextField filterCourseField, filterTeacherField, filterSemesterField, filterGroupField;
+    @FXML private JFXTextField courseNameField, roomNumberField, semesterField, groupField, promotionField;
     @FXML private JFXComboBox<Teacher> teacherComboBox;
-    @FXML private JFXTextField semesterField;
-    @FXML private JFXTextField groupField;
-    @FXML private JFXTextField promotionField;
-    @FXML private JFXTextField filterCourseField;
-    @FXML private JFXTextField filterTeacherField;
-    @FXML private JFXTextField filterSemesterField;
-    @FXML private JFXTextField filterGroupField;
-
-    // Corrected FXML declarations
-    @FXML private JFXComboBox<String> dayOfWeekComboBox;
-    @FXML private JFXComboBox<String> timeSlotComboBox;
-
-    // --- FXML Fields for Tables and Enrollment ---
+    @FXML private JFXComboBox<String> dayOfWeekComboBox, timeSlotComboBox;
     @FXML private TableView<Schedule> scheduleTable;
     @FXML private TableView<Student> enrolledStudentsTable;
     @FXML private TableColumn<Student, String> studentNameColumn;
     @FXML private Label enrollmentLabel;
     @FXML private JFXComboBox<Student> allStudentsComboBox;
-    @FXML private JFXButton enrollButton;
-    @FXML private JFXButton unenrollButton;
+    @FXML private JFXButton enrollButton, unenrollButton;
+    @FXML private JFXTextField majorField;
+    @FXML private TableColumn<Schedule, String> majorColumn;
 
-    // --- Data and Lists ---
+    // --- Data Lists ---
     private final AppDAO dao = new AppDAO();
-    private final ObservableList<Schedule> scheduleList = FXCollections.observableArrayList();
+    private final ObservableList<Schedule> masterScheduleList = FXCollections.observableArrayList();
+    private FilteredList<Schedule> filteredScheduleList;
     private final ObservableList<Student> enrolledStudentList = FXCollections.observableArrayList();
-    private final ObservableList<Student> allStudentsList = FXCollections.observableArrayList();
+
+    // *** FIX: Removed the duplicate declaration. This is the only student list that holds all students. ***
+    private final ObservableList<Student> masterStudentList = FXCollections.observableArrayList();
+    private final ObservableList<Student> enrollableStudentsList = FXCollections.observableArrayList();
+
     private final ObservableList<Teacher> allTeachersList = FXCollections.observableArrayList();
     private final ObservableList<String> weekdayTimeSlots = FXCollections.observableArrayList("07:00-10:00", "10:30-13:30", "14:00-17:00", "17:30-20:30");
     private final ObservableList<String> weekendTimeSlots = FXCollections.observableArrayList("07:00-11:00");
-    private FilteredList<Schedule> filteredScheduleList;
-    private final ObservableList<Schedule> masterScheduleList = FXCollections.observableArrayList();
-    private final ObservableList<Student> masterStudentList = FXCollections.observableArrayList();
-    private final ObservableList<Student> enrollableStudentsList = FXCollections.observableArrayList();
 
 
     @FXML
@@ -89,7 +79,7 @@ public class ClassesController {
             if (newSelection != null) {
                 populateForm(newSelection);
                 loadEnrolledStudents(newSelection.getId());
-                filterEnrollableStudents(newSelection.getSemester());
+                filterEnrollableStudents(newSelection.getSemester(), newSelection.getMajor());
                 enrollmentLabel.setText("Enrolled in: " + newSelection.getCourseName());
             } else {
                 clearForm();
@@ -117,6 +107,7 @@ public class ClassesController {
 
     // --- Setup Methods ---
     private void setupScheduleTable() {
+        // This method should be fully implemented to define your scheduleTable columns
         TableColumn<Schedule, String> courseCol = new TableColumn<>("Course");
         courseCol.setCellValueFactory(new PropertyValueFactory<>("courseName"));
 
@@ -125,6 +116,9 @@ public class ClassesController {
 
         TableColumn<Schedule, String> semesterCol = new TableColumn<>("Semester");
         semesterCol.setCellValueFactory(new PropertyValueFactory<>("semester"));
+
+        TableColumn<Schedule, String> majorCol = new TableColumn<>("Major");
+        majorCol.setCellValueFactory(new PropertyValueFactory<>("major"));
 
         TableColumn<Schedule, String> groupCol = new TableColumn<>("Group");
         groupCol.setCellValueFactory(new PropertyValueFactory<>("group"));
@@ -139,12 +133,12 @@ public class ClassesController {
         timeCol.setCellValueFactory(new PropertyValueFactory<>("startTime"));
 
 
-        scheduleTable.getColumns().setAll(courseCol, teacherCol, semesterCol, groupCol, promotionCol, dayCol, timeCol);
+        scheduleTable.getColumns().setAll(courseCol, teacherCol, majorCol, semesterCol, groupCol, promotionCol, dayCol, timeCol);
         scheduleTable.setItems(filteredScheduleList);
     }
 
     private void setupEnrolledStudentsTable() {
-        studentNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        studentNameColumn.setCellValueFactory(new PropertyValueFactory<>("fullName"));
         enrolledStudentsTable.setItems(enrolledStudentList);
     }
 
@@ -171,7 +165,7 @@ public class ClassesController {
 
     // --- Data Loading Methods ---
     private void loadScheduleData() { masterScheduleList.setAll(dao.getAllSchedules()); }
-    private void loadAllStudentsData() { allStudentsList.setAll(dao.getAllStudents()); }
+    private void loadAllStudentsData() { masterStudentList.setAll(dao.getAllStudents()); }
     private void loadAllTeachersData() { allTeachersList.setAll(dao.getAllTeachers()); }
     private void loadEnrolledStudents(int scheduleId) { enrolledStudentList.setAll(dao.getStudentsForSchedule(scheduleId)); }
 
@@ -184,7 +178,7 @@ public class ClassesController {
         if (selectedTeacher == null || courseNameField.getText().isEmpty() || timeSlot == null) return;
 
         String[] times = timeSlot.split("-");
-        Schedule newSchedule = new Schedule(0, courseNameField.getText(), roomNumberField.getText(), null, dayOfWeekComboBox.getValue(), times[0], times[1], semesterField.getText(), groupField.getText(), promotionField.getText());
+        Schedule newSchedule = new Schedule(0, courseNameField.getText(), majorField.getText(), roomNumberField.getText(), null, dayOfWeekComboBox.getValue(), times[0], times[1], semesterField.getText(), groupField.getText(), promotionField.getText());
         dao.addSchedule(newSchedule, selectedTeacher.getId());
         loadScheduleData();
         clearForm();
@@ -198,7 +192,7 @@ public class ClassesController {
         if (selectedSchedule == null || selectedTeacher == null || timeSlot == null) return;
 
         String[] times = timeSlot.split("-");
-        Schedule updatedSchedule = new Schedule(selectedSchedule.getId(), courseNameField.getText(), roomNumberField.getText(), null, dayOfWeekComboBox.getValue(), times[0], times[1], semesterField.getText(), groupField.getText(), promotionField.getText());
+        Schedule updatedSchedule = new Schedule(selectedSchedule.getId(), courseNameField.getText(),majorField.getText(), roomNumberField.getText(), null, dayOfWeekComboBox.getValue(), times[0], times[1], semesterField.getText(), groupField.getText(), promotionField.getText());
         dao.updateSchedule(updatedSchedule, selectedTeacher.getId());
         loadScheduleData();
         clearForm();
@@ -285,6 +279,7 @@ public class ClassesController {
         timeSlotComboBox.getSelectionModel().clearSelection();
         timeSlotComboBox.getItems().clear();
         scheduleTable.getSelectionModel().clearSelection();
+        majorField.clear();
     }
 
     @FXML
@@ -390,32 +385,17 @@ public class ClassesController {
         });
     }
 
-    private void filterEnrollableStudents(String semester) {
-        // --- Start of Debugging ---
-        System.out.println("\n--- Filtering Students for Enrollment ---");
-        System.out.println("Class Semester: '" + semester + "'");
-        System.out.println("Total students in master list: " + masterStudentList.size());
-        // --- End of Debugging ---
-
+    private void filterEnrollableStudents(String semester, String major) {
         enrollableStudentsList.clear();
-        if (semester != null && !semester.trim().isEmpty()) {
+        if (semester != null && !semester.trim().isEmpty() && major != null && !major.trim().isEmpty()) {
             List<Student> matchingStudents = masterStudentList.stream()
-                    .filter(student -> {
-                        boolean match = semester.equalsIgnoreCase(student.getSemester());
-                        if (student.getSemester() != null) {
-                            System.out.println("Checking Student: " + student.getFullName() + " | Semester: '" + student.getSemester() + "' | Match: " + match);
-                        }
-                        return match;
-                    })
+                    .filter(student ->
+                            semester.equalsIgnoreCase(student.getSemester()) &&
+                                    major.equalsIgnoreCase(student.getMajor())
+                    )
                     .collect(Collectors.toList());
-
-            // --- Final Debugging print ---
-            System.out.println("Found " + matchingStudents.size() + " matching students.");
             enrollableStudentsList.setAll(matchingStudents);
-        } else {
-            System.out.println("Class semester is null or empty. No students will be shown.");
         }
-        System.out.println("--- End of Filtering ---\n");
     }
 
     private void setupFiltering() {
